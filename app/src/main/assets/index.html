@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+  <meta name="theme-color" content="#080d1b">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'none'">
+  <title>Neon Dodge</title>
+  <style>
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#080d1b;color:#f3f6ff;font-family:system-ui,-apple-system,Arial,sans-serif;user-select:none;-webkit-user-select:none}
+    #app{height:100%;position:relative;max-width:560px;margin:auto;background:radial-gradient(ellipse at 50% 0%,#18223d 0%,#080d1b 62%)}
+    canvas{position:absolute;width:100%;height:100%;touch-action:none}
+    .hud{position:absolute;inset:0 0 auto;display:flex;align-items:center;justify-content:space-between;padding:24px 24px 10px;z-index:2;background:linear-gradient(#080d1bee,#080d1b00)}
+    .label{font-size:10px;color:#8c9ab6;letter-spacing:2.5px;font-weight:700}.score{font-size:30px;line-height:1.3;font-weight:800;font-variant-numeric:tabular-nums}.best{text-align:center}.best strong{display:block;color:#b7c6df;font-size:18px;margin-top:3px;font-variant-numeric:tabular-nums}
+    button{font:inherit;cursor:pointer;border:0;color:#f3f6ff}#pause{width:46px;height:46px;border:1px solid #31405b;background:#142038;border-radius:15px;font-size:19px;font-weight:bold}#pause:disabled{opacity:.35}
+    .bottom{position:absolute;bottom:20px;left:0;right:0;text-align:center;font-size:11px;color:#8b9bb9;letter-spacing:1px;pointer-events:none}.level{display:inline-block;padding:7px 13px;border:1px solid #283751;border-radius:50px;color:#9dacc5;margin-bottom:12px;font-size:10px;letter-spacing:2px;background:#0e182acc}
+    .overlay{position:absolute;inset:0;z-index:3;display:flex;align-items:center;justify-content:center;padding:24px;background:#050916b5;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}.overlay[hidden]{display:none}
+    .card{text-align:center;width:100%;max-width:350px;padding:32px 22px;border:1px solid #34465c;border-radius:28px;background:linear-gradient(150deg,#19253be8,#0d1425f2);box-shadow:0 30px 80px #0005}
+    .badge{display:inline-block;color:#60eada;border:1px solid #315f62;font-size:10px;letter-spacing:3px;padding:7px 12px;border-radius:30px;margin-bottom:22px}.ship-icon{width:62px;height:73px;margin:0 auto 16px;filter:drop-shadow(0 0 18px #58f3e571)}
+    h1{font-size:46px;margin:0;line-height:1.02;letter-spacing:-2px;font-weight:900}h1 span{color:#56f3e5}p{color:#aab9d1;font-size:14px;line-height:1.7;margin:20px 0 23px}.primary{width:100%;padding:16px 12px;border-radius:15px;background:#56f3e5;color:#062026;font-weight:800;letter-spacing:.4px;box-shadow:0 8px 32px #56f3e524}.primary:active{transform:scale(.97)}.secondary{background:transparent;color:#9babc6;margin:15px 0 0;padding:9px 20px;font-size:13px}.note{font-size:10px;color:#677b9b;margin-top:22px;letter-spacing:1px}.result{font-size:46px;color:#56f3e5;line-height:1.2;margin:16px 0 0;font-weight:800;font-variant-numeric:tabular-nums}.result[hidden]{display:none}
+    @media(max-height:600px){.card{padding:22px}.ship-icon{height:45px;margin-bottom:10px}.badge{margin-bottom:12px}h1{font-size:35px}p{margin:15px 0}.note{margin-top:12px}.hud{padding-top:15px}}
+    @media(prefers-reduced-motion:reduce){button{transition:none}}
+  </style>
+</head>
+<body>
+<main id="app">
+  <canvas id="game" width="360" height="720" aria-label="Sân chơi: kéo tàu sang trái hoặc phải để né thiên thạch"></canvas>
+  <header class="hud">
+    <div><div class="label">ĐIỂM</div><div id="score" class="score">0000</div></div>
+    <div class="best"><div class="label">KỶ LỤC</div><strong id="best">0</strong></div>
+    <button id="pause" aria-label="Tạm dừng" disabled>Ⅱ</button>
+  </header>
+  <footer class="bottom"><div id="level" class="level">LEVEL 01</div><div>KÉO TRÁI / PHẢI ĐỂ DI CHUYỂN</div></footer>
+  <section id="overlay" class="overlay" aria-modal="true" role="dialog" aria-labelledby="title">
+    <div class="card">
+      <div id="badge" class="badge">OFFLINE ARCADE</div>
+      <svg class="ship-icon" viewBox="0 0 62 73" aria-hidden="true"><path d="M31 3L59 58L31 46L3 58Z" fill="#56f3e5"/><path d="M31 14L38 39L24 39Z" fill="#eaffff"/><path d="M25 54L31 73L37 54Z" fill="#b794ff"/></svg>
+      <h1 id="title">NEON<br><span>DODGE</span></h1>
+      <div id="result" class="result" hidden></div>
+      <p id="description">Lái tàu qua cơn mưa thiên thạch.<br>Kéo ngón tay để né. Sống càng lâu,<br>thử thách càng lớn.</p>
+      <button id="primary" class="primary">BẮT ĐẦU CHƠI →</button>
+      <button id="secondary" class="secondary" hidden>Chơi lại từ đầu</button>
+      <div class="note">KHÔNG QUẢNG CÁO · KHÔNG CẦN MẠNG</div>
+    </div>
+  </section>
+</main>
+<script src="engine.js"></script>
+<script src="game.js"></script>
+</body>
+</html>
